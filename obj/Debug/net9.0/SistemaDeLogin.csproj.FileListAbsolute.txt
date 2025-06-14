@@ -323,3 +323,4 @@ C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\refint\SistemaDeLogi
 C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\SistemaDeLogin.pdb
 C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\SistemaDeLogin.genruntimeconfig.cache
 C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\ref\SistemaDeLogin.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\SistemaDeLogin.sourcelink.json
