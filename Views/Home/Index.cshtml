@@ -1,0 +1,62 @@
+﻿@{
+  var authenticado = User.Identity == null ? false : User.Identity.IsAuthenticated;
+}
+
+<section class="hero-section">
+  <div class="hero-card">
+    <h1>🔧 Sistema de Gestão para Assistência Técnica</h1>
+    <p>Bem-vindo ao nosso sistema de gestão desenvolvido especialmente para assistências técnicas de eletrônicos. Controle total de serviços, clientes, peças e usuários em um só lugar.</p>
+    @if (authenticado)
+    {
+      <a href="Conta/Index" class="btn btn-primary">Explorar Funcionalidades</a>
+    }
+    else
+    {
+      <a href="Conta/Login" class="btn btn-primary">Explorar Funcionalidades</a>
+    }
+    
+  </div>
+</section>
+
+<section class="features-section bg-light --text-dark py-5">
+  <div class="container">
+    <h2 class="text-center mb-5 text-primary fw-bold text-center"><i class="fas fa-check-circle text-success me-2"></i>Funcionalidades principais</h2>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="feature-card p-4 shadow-sm h-100 rounded-4 bg-white hover-glow">
+          <i class="fas fa-user fa-2x text-primary mb-3 text-center"></i>
+          <h5 class="fw-bold">Cadastro de Clientes</h5>
+          <p class="--text-dark">Gerencie dados dos seus clientes com facilidade e segurança.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="feature-card p-4 shadow-sm h-100 rounded-4 bg-white hover-glow">
+          <i class="fas fa-cogs fa-2x text-primary mb-3 text-center"></i>
+          <h5 class="fw-bold ">Registro de Aparelhos e Serviços</h5>
+          <p class="--text-dark">Controle serviços, manutenções, orçamentos e trocas de peças.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="feature-card p-4 shadow-sm h-100 rounded-4 bg-white hover-glow">
+          <i class="fas fa-boxes fa-2x text-primary mb-3 text-center"></i>
+          <h5 class="fw-bold ">Controle de Peças</h5>
+          <p class="--text-dark">Cadastre e monitore as peças utilizadas nos reparos da loja.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="feature-card p-4 shadow-sm h-100 rounded-4 bg-white hover-glow">
+          <i class="fas fa-users-cog fa-2x text-primary mb-3 text-center"></i>
+          <h5 class="fw-bold ">Gestão de Funcionários</h5>
+          <p class="--text-dark">Gerencie permissões de acesso com controle total de funções.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="feature-card p-4 shadow-sm h-100 rounded-4 bg-white hover-glow">
+          <i class="fas fa-lock fa-2x text-primary mb-3 text-center"></i>
+          <h5 class="fw-bold ">Acesso Seguro</h5>
+          <p class="--text-dark">Perfis individuais para segurança e organização do fluxo de trabalho.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

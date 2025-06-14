@@ -1,0 +1,92 @@
+@model SistemaDeLogin.Models.Servico
+@{
+    ViewData["Title"] = "Adicionar Serviço";
+    var clientes = ViewBag.Clientes as List<Clientes> ?? new List<Clientes>();
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg rounded-4 p-4">
+        <h2 class="text-center mb-4">Novo Serviço</h2>
+
+        @* Se a lista de clientes estiver vazia, mostra um alerta e bloqueia o form *@
+        @if (!clientes.Any())
+        {
+            <div class="alert alert-warning text-center">
+                Nenhum cliente disponível. <a asp-controller="Cliente" asp-action="Adicionar">Cadastre um cliente</a> antes de adicionar um serviço.
+            </div>
+        }
+        else
+        {
+            <form asp-controller="Servico" asp-action="Adicionar" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Cliente</label>
+                        <select asp-for="IdCliente" class="form-select" required>
+                            <option value="">Selecione o cliente</option>
+                            @foreach (var cliente in clientes)
+                            {
+                                <option value="@cliente.IdCliente">@cliente.Nome</option>
+                            }
+                        </select>
+                        <span asp-validation-for="IdCliente" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="NomeAparelho" class="form-label"></label>
+                        <input asp-for="NomeAparelho" class="form-control" required />
+                        <span asp-validation-for="NomeAparelho" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="DefeitoInformado" class="form-label"></label>
+                        <textarea asp-for="DefeitoInformado" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Diagnostico" class="form-label"></label>
+                        <textarea asp-for="Diagnostico" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="Status" class="form-label"></label>
+                        <select asp-for="Status" class="form-select" required>
+                            <option value="0">PENDENTE</option>
+                            <option value="1">COMPLETO</option>
+                            <option value="2">CANCELADO</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Valor" class="form-label"></label>
+                        <input asp-for="Valor" type="number" step="0.01" class="form-control" required />
+                        <span asp-validation-for="Valor" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="DataDeEntrada" class="form-label"></label>
+                        <input asp-for="DataDeEntrada" type="date" class="form-control" required min="@($"{DateTime.Now.Year}-01-01")" />
+                        <span asp-validation-for="DataDeEntrada" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="PrevisaoDeEntrega" class="form-label"></label>
+                        <input asp-for="PrevisaoDeEntrega" type="date" class="form-control" required min="@($"{DateTime.Now.Year}-01-01")" />
+                        <span asp-validation-for="PrevisaoDeEntrega" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success px-4">Salvar Serviço</button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

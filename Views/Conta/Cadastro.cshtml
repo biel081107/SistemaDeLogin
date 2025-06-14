@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "Cadastrar";
+}
+
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        @TempData["Sucesso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+@if (TempData["Erro"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        @TempData["Erro"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+
+<h2 class="mb-4 text-center">Criar Conta</h2>
+
+<form asp-controller="Conta" asp-action="Cadastro" method="post" class="mx-auto" style="max-width: 400px;">
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input for="Email" class="form-control" name="email" id="email" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Password" class="form-label">Senha</label>
+        <input for="Password" type="password" class="form-control" id="password" name="password" required />
+
+        <!-- Validação da senha -->
+        <div id="password-requirements" class="mt-2" style="font-size: 0.9rem; display: none;">
+            <p id="length" class="text-danger">❗ Mínimo de 6 caracteres</p>
+            <p id="lowercase" class="text-danger">❗ Pelo menos 1 letra minúscula (ex: a)</p>
+            <p id="uppercase" class="text-danger">❗ Pelo menos 1 letra maiúscula (ex: A)</p>
+            <p id="number" class="text-danger">❗ Pelo menos 1 número (ex: 1)</p>
+            <p id="special" class="text-danger">❗ Pelo menos 1 caractere não alfanumérico (ex: !, @@, #, $)</p>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="ConfirmPassword" class="form-label">Confirmar Senha</label>
+        <input for="ConfirmPassword" type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
+
+        <!-- Mensagem de erro para senhas diferentes -->
+        <div id="password-match" class="mt-2 text-danger" style="font-size: 0.9rem; display: none;">
+            ❗ As senhas não coincidem
+        </div>
+    </div>
+
+    <button id="submit-btn" type="submit" class="btn btn-primary w-100" disabled>Cadastrar</button>
+
+    <p class="mt-3 text-center">
+        Já tem conta? <a asp-controller="Conta" asp-action="Login" style="color: var(--accent);">Entrar</a>
+    </p>
+</form>
+
+
+@section Scripts {
+    <script>
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const requirementsBox = document.getElementById('password-requirements');
+        const passwordMatchMsg = document.getElementById('password-match');
+        const submitBtn = document.getElementById('submit-btn');
+
+        const lengthReq = document.getElementById('length');
+        const lowercaseReq = document.getElementById('lowercase');
+        const uppercaseReq = document.getElementById('uppercase');
+        const numberReq = document.getElementById('number');
+        const specialReq = document.getElementById('special');
+
+        passwordInput.addEventListener('input', validateForm);
+        confirmPasswordInput.addEventListener('input', validateForm);
+
+        function validateForm() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            // Mostrar/esconder o box de requisitos
+            if (password.length > 0) {
+                requirementsBox.style.display = 'block';
+            } else {
+                requirementsBox.style.display = 'none';
+            }
+
+            // Verificações dos requisitos
+            const hasLength = password.length >= 6;
+            const hasLowercase = /[a-z]/.test(password);
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+
+            updateRequirement(lengthReq, hasLength, "Mínimo de 6 caracteres");
+            updateRequirement(lowercaseReq, hasLowercase, "Pelo menos 1 letra minúscula (ex: a)");
+            updateRequirement(uppercaseReq, hasUppercase, "Pelo menos 1 letra maiúscula (ex: A)");
+            updateRequirement(numberReq, hasNumber, "Pelo menos 1 número (ex: 1)");
+            updateRequirement(specialReq, hasSpecial, "Pelo menos 1 caractere não alfanumérico (ex: !, @@, #, $)");
+
+            // Verificação se as senhas são iguais
+            const passwordsMatch = password === confirmPassword && password.length > 0;
+
+            if (!passwordsMatch) {
+                passwordMatchMsg.style.display = 'block';
+            } else {
+                passwordMatchMsg.style.display = 'none';
+            }
+
+            // Habilitar botão apenas se tudo estiver ok
+            const allValid = hasLength && hasLowercase && hasUppercase && hasNumber && hasSpecial && passwordsMatch;
+
+            submitBtn.disabled = !allValid;
+        }
+
+        function updateRequirement(element, isValid, message) {
+            if (isValid) {
+                element.classList.remove('text-danger');
+                element.classList.add('text-success');
+                element.innerHTML = '✔️ ' + message;
+            } else {
+                element.classList.remove('text-success');
+                element.classList.add('text-danger');
+                element.innerHTML = '❗ ' + message;
+            }
+        }
+    </script>
+}

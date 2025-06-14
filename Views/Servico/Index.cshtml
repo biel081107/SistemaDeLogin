@@ -1,0 +1,357 @@
+@model IEnumerable<ServicoComClienteViewModel>
+
+@{
+    ViewData["Title"] = "Serviços";
+}
+<style>
+    :root {
+        --primary: #26168C;
+        --secondary: #110E59;
+        --dark: #0B0940;
+        --accent: #FFD700;
+        --background: #020426;
+        --text-light: #F2F2F2;
+        --text-dark: #110E59;
+    }
+
+    body {
+        background-color: var(--background);
+        color: var(--text-light);
+    }
+
+    .search-bar {
+        border-radius: 50px;
+        border: 1px solid #444;
+        padding-left: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .add-btn {
+        background-color: var(--accent);
+        color: var(--dark);
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .servico-card {
+        transition: transform 0.3s;
+    }
+
+    .servico-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-box {
+        background-color: var(--dark);
+        color: var(--text-light);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        border: 1px solid #1a1a40;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+
+    .modal-content-custom {
+        background-color: var(--dark);
+        color: var(--text-light);
+        border: 1px solid var(--primary);
+    }
+
+    .modal-content-custom h4#modalTitle {
+        color: var(--accent);
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .modal-content-custom input,
+    .modal-content-custom textarea,
+    .modal-content-custom select {
+        background-color: var(--secondary);
+        color: var(--text-light);
+        border: 1px solid var(--accent);
+    }
+
+    .modal-content-custom input::placeholder,
+    .modal-content-custom textarea::placeholder {
+        color: #ccc;
+    }
+
+    .modal-content-custom label {
+        color: var(--accent);
+    }
+
+    .modal-content-custom .btn-accent {
+        background-color: var(--accent);
+        color: var(--dark);
+        border: none;
+    }
+
+    .modal-content-custom .btn-accent:hover {
+        background-color: #e6c200;
+        color: var(--dark);
+    }
+
+    .modal-content-custom .btn-outline-secondary {
+        color: var(--text-light);
+        border-color: var(--accent);
+    }
+
+    .modal-content-custom .btn-outline-secondary:hover {
+        background-color: var(--accent);
+        color: var(--dark);
+    }
+
+    .btn-accent {
+        background-color: #ffc107 !important;
+        color: #212529 !important;
+    }
+
+    .btn-accent:hover {
+        background-color: #e0a800 !important;
+    }
+
+    @@media (max-width: 576px) {
+        .servico-card .d-flex.justify-content-end {
+            justify-content: center !important;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+    }
+</style>
+
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        @TempData["Sucesso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+@if (TempData["Erro"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        @TempData["Erro"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center" style="color: var(--accent);">Serviços Cadastrados</h2>
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <input id="searchInput" class="form-control form-control-lg search-bar w-100" type="text" placeholder="Buscar por nome do aparelho..." oninput="filtrarServicos()" />
+        <a href="/Servico/Adicionar" class="add-btn">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+
+    <div id="servicosContainer" class="row">
+        @foreach (var servico in Model)
+        {
+            <div class="col-md-4 mb-4 servico-card" data-nome="@servico.Servico?.NomeAparelho">
+                <div class="card-box h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="fw-bold">@servico.Servico?.NomeAparelho</h5>
+                        <p class="mb-2">@servico.Servico?.DefeitoInformado</p>
+                        <span class="badge px-3 py-2 rounded-pill 
+                            @(servico.Servico?.Status == 0 ? "bg-warning text-dark" : 
+                              servico.Servico?.Status == 1 ? "bg-success text-white" : 
+                              servico.Servico?.Status == 2 ? "bg-danger text-white" : "bg-secondary")">
+                            @(servico.Servico?.Status == 0 ? "PENDENTE" :
+                              servico.Servico?.Status == 1 ? "COMPLETO" :
+                              servico.Servico?.Status == 2 ? "CANCELADO" : "DESCONHECIDO")
+                        </span>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <button class="btn btn-sm btn-outline-light" onclick="openServicoModal('edit', @servico.Servico?.IdServico)" title="Editar">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" onclick="openServicoModal('details', @servico.Servico?.IdServico)" title="Detalhes">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <form asp-controller="Servico" asp-action="DeleteServicoById" method="post" onsubmit="return confirm('Tem certeza que deseja excluir?');">
+                            <input type="hidden" name="id" value="@servico.Servico?.IdServico" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div id="paginacao" class="d-flex justify-content-center mt-4 gap-2 flex-wrap"></div>
+</div>
+
+<!-- Modal genérico -->
+<div id="servicoModal" class="modal d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex align-items-center justify-content-center">
+    <div class="modal-content-custom p-4 rounded-4 w-75 shadow-lg">
+        <h4 id="modalTitle" class="mb-3"></h4>
+        <div id="modalContent"></div>
+        <div class="text-end">
+            <button class="btn btn-outline-secondary mt-3" onclick="closeServicoModal()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const servicos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+
+        function filtrarServicos() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+
+            document.querySelectorAll('.servico-card').forEach(card => {
+                const nome = card.getAttribute('data-nome').toLowerCase();
+                card.classList.toggle('d-none', !nome.includes(input));
+            });
+
+            paginaAtual = 1;
+            aplicarPaginacao();
+        }
+
+        function openServicoModal(type, id) {
+            const servico = servicos.find(s => s.Servico.IdServico === id);
+            if (!servico) return;
+
+            const modal = document.getElementById('servicoModal');
+            const content = document.getElementById('modalContent');
+            const title = document.getElementById('modalTitle');
+
+            if (type === 'edit') {
+    title.innerText = "Editar Serviço";
+    const isCompleto = servico.Servico.Status === 1;
+    const isCancelado = servico.Servico.Status === 2;
+
+    content.innerHTML = `
+        <form method="post" action="/Servico/Editar">
+            <input type="hidden" name="IdServico" value="${servico.Servico.IdServico}" />
+            <input type="hidden" name="IdCliente" value="${servico.Servico.IdCliente}" />
+            <input type="hidden" name="DataDeEntrada" value="${servico.Servico.DataDeEntrada}" />
+            <input type="hidden" id="statusInput" name="Status" value="${servico.Servico.Status}" />
+
+            <div class="mb-3">
+                <label class="form-label">Nome do Aparelho:</label>
+                <input name="NomeAparelho" class="form-control" value="${servico.Servico.NomeAparelho}" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Defeito Informado:</label>
+                <input name="DefeitoInformado" class="form-control" value="${servico.Servico.DefeitoInformado}" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Valor:</label>
+                <input type="number" name="Valor" class="form-control" value="${servico.Servico.Valor}" step="0.01" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Previsão de Entrega:</label>
+                <input type="date" name="PrevisaoDeEntrega" class="form-control"
+                    value="${new Date(servico.Servico.PrevisaoDeEntrega).toISOString().split('T')[0]}" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Data de Entrada:</label>
+                <input class="form-control" value="${new Date(servico.Servico.DataDeEntrada).toLocaleDateString()}" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Cliente:</label>
+                <input class="form-control" value="${servico.NomeCliente}" disabled />
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-3 justify-content-between">
+                <button type="submit" class="btn btn-accent flex-fill">💾 Salvar</button>
+
+                ${servico.Servico.Status === 0 ? `
+                    <button type="button" class="btn btn-success flex-fill" onclick="alterarStatusModal(1)">✅ Concluir</button>
+                    <button type="button" class="btn btn-danger flex-fill" onclick="alterarStatusModal(2)">❌ Cancelar</button>
+                ` : `
+                    <button type="button" class="btn btn-warning flex-fill" onclick="alterarStatusModal(0)">🔄 Ativar</button>
+                `}
+            </div>
+        </form>
+    `;
+}
+ else if (type === 'details') {
+                title.innerText = "Detalhes do Serviço";
+                content.innerHTML = `
+                    <div>
+                        <p><strong>Nome Aparelho:</strong> ${servico.Servico.NomeAparelho}</p>
+                        <p><strong>Defeito:</strong> ${servico.Servico.DefeitoInformado}</p>
+                        <p><strong>Diagnóstico:</strong> ${servico.Servico.Diagnostico}</p>
+                        <p><strong>Status:</strong> ${["PENDENTE", "COMPLETO", "CANCELADO"][servico.Servico.Status]}</p>
+                        <p><strong>Valor:</strong> R$ ${servico.Servico.Valor.toFixed(2)}</p>
+                        <p><strong>Entrada:</strong> ${new Date(servico.Servico.DataDeEntrada).toLocaleDateString()}</p>
+                        <p><strong>Previsão:</strong> ${new Date(servico.Servico.PrevisaoDeEntrega).toLocaleDateString()}</p>
+                        <p><strong>Cliente:</strong> ${servico.NomeCliente}</p>
+                    </div>`;
+            }
+
+            modal.classList.remove('d-none');
+        }
+
+        function closeServicoModal() {
+            document.getElementById('servicoModal').classList.add('d-none');
+        }
+
+        const ITEMS_POR_PAGINA = 6;
+        let paginaAtual = 1;
+        let totalPaginas = 1;
+
+        function aplicarPaginacao() {
+            const visiveis = Array.from(document.querySelectorAll('.servico-card:not(.d-none)'));
+            totalPaginas = Math.ceil(visiveis.length / ITEMS_POR_PAGINA);
+            paginaAtual = Math.min(paginaAtual, totalPaginas || 1);
+
+            visiveis.forEach((card, index) => {
+                const inicio = (paginaAtual - 1) * ITEMS_POR_PAGINA;
+                const fim = inicio + ITEMS_POR_PAGINA;
+                card.style.display = (index >= inicio && index < fim) ? 'block' : 'none';
+            });
+
+            renderizarControlesPaginacao();
+        }
+
+        function renderizarControlesPaginacao() {
+            const container = document.getElementById('paginacao');
+            container.innerHTML = '';
+
+            if (paginaAtual > 1) {
+                container.appendChild(criarBotao('«', () => { paginaAtual--; aplicarPaginacao(); }));
+            }
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = criarBotao(i, () => { paginaAtual = i; aplicarPaginacao(); });
+                btn.className += i === paginaAtual ? ' btn-accent' : '';
+                container.appendChild(btn);
+            }
+
+            if (paginaAtual < totalPaginas) {
+                container.appendChild(criarBotao('»', () => { paginaAtual++; aplicarPaginacao(); }));
+            }
+        }
+
+        function criarBotao(texto, onClick) {
+            const btn = document.createElement('button');
+            btn.textContent = texto;
+            btn.className = 'btn btn-sm btn-outline-secondary';
+            btn.onclick = onClick;
+            return btn;
+        }
+        function alterarStatusModal(novoStatus) {
+        document.getElementById('statusInput').value = novoStatus;
+        document.querySelector('form[action="/Servico/Editar"]').submit();
+        }
+
+        filtrarServicos(); // aplica filtro e paginação
+    </script>
+}

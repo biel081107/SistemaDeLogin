@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: sistema-de-login
+    env: docker
+    plan: free
+    autoDeploy: true

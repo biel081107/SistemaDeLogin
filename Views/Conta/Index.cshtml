@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Painel do Usuário";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="container py-5">
+    <h2 class="mb-4 text-center text-light">Bem-vindo, @ViewBag.name!</h2>
+
+    <div class="row justify-content-center g-4">
+        <!-- Card Cliente -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow border border-accent custom-hover">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-users fa-3x text-warning mb-2"></i>
+                        <h4 class="card-title">Clientes</h4>
+                        <p class="card-text">
+                            Gerencie o cadastro, visualização e edição dos seus clientes com facilidade e controle completo.
+                        </p>
+                    </div>
+                    <a asp-controller="Cliente" asp-action="Index" class="btn btn-primary w-100 mt-auto">Acessar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Peças -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow border border-accent custom-hover">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-cogs fa-3x text-warning mb-2"></i>
+                        <h4 class="card-title">Peças</h4>
+                        <p class="card-text">
+                            Cadastre, edite e controle o estoque de peças utilizadas em serviços e manutenções.
+                        </p>
+                    </div>
+                    <a asp-controller="Pecas" asp-action="Index" class="btn btn-primary w-100 mt-auto">Acessar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Serviços -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow border border-accent custom-hover">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-tools fa-3x text-warning mb-2"></i>
+                        <h4 class="card-title">Serviços</h4>
+                        <p class="card-text">
+                            Registre e acompanhe os serviços prestados, valores, datas e status de execução.
+                        </p>
+                    </div>
+                    <a asp-controller="Servico" asp-action="Index" class="btn btn-primary w-100 mt-auto">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

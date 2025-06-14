@@ -1,0 +1,446 @@
+@model List<Pecas>
+@{
+    ViewData["Title"] = "Peças";
+}
+
+<style>
+    .pecas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .peca-panel {
+        background-color: var(--dark);
+        border: 1px solid var(--secondary);
+        border-radius: 20px;
+        padding: 1.5rem;
+        color: var(--text-light);
+        position: relative;
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .peca-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px var(--accent);
+    }
+
+    .peca-content {
+        position: relative;
+        padding-right: 3.5rem;
+        z-index: 0;
+    }
+
+    .peca-content h5 {
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+    }
+
+    .descricao {
+        color: #ccc;
+        font-size: 0.95rem;
+    }
+
+    .preco {
+        font-weight: bold;
+        color: #fff;
+        margin-top: 0.75rem;
+    }
+
+    .peca-actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 0.6rem;
+        z-index: 2;
+    }
+
+    .peca-actions a,
+    .peca-actions button {
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: 1.1rem;
+        cursor: pointer;
+    }
+
+    .peca-actions button i {
+        font-size: 1.1rem;
+    }
+
+    .peca-actions form {
+        display: inline-block;
+    }
+    .btn-accent {
+    background-color: #ffc107 !important;  /* amarelo destaque */
+    color: #212529 !important;
+    }
+    .btn-accent:hover {
+        background-color: #e0a800 !important;
+    }
+    .pagination .page-link {
+        background-color: #fad259;
+        color: var(--dark);
+        transition: background-color 0.2s ease, color 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #ffbb00;
+        color: var(--dark);
+        font-weight: bold;
+    }
+    .pagination .page-link:hover {
+        background-color: #e0a800;
+        color: var(--dark);
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background-color: #ccc;
+        color: #666;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+    .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: fit-content;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.4rem;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.bg-secondary {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+    /* RESPONSIVIDADE PARA TELAS ATÉ 1000px */
+    @@media (max-width: 1000px) {
+        .peca-actions {
+            position: static;
+            margin-top: 1rem;
+            justify-content: center;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--secondary);
+            gap: 0.5rem;
+        }
+
+        .peca-actions a,
+        .peca-actions button {
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 0.3rem 0.6rem;
+            border: 1px solid var(--secondary);
+        }
+
+        .peca-content {
+            padding-right: 0; /* remove espaço lateral reservado para ícones */
+        }
+    }
+
+    /* TELAS DE CELULAR (480px) — Ícones aparecem ao clicar */
+    @@media (max-width: 480px) {
+        .peca-actions {
+            display: none;
+        }
+
+        .peca-panel {
+            cursor: pointer;
+        }
+
+        .peca-panel.expanded .peca-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 0.8rem;
+            padding-top: 0.4rem;
+            border-top: 1px solid var(--secondary);
+        }
+    }
+</style>
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        @TempData["Sucesso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+@if (TempData["Erro"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        @TempData["Erro"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+}
+
+<div class="container py-5">
+    <h2 class="text-center mb-5" style="color: var(--accent);">Gerenciamento de Peças</h2>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="mb-4 position-relative">
+            <input type="text" id="searchInput" class="form-control bg-dark text-light border-light" placeholder="Buscar peça por nome..." />
+            <ul id="suggestions" class="list-group position-absolute w-100 z-3"></ul>
+        </div>
+        <a href="/Pecas/Adicionar" class="btn btn-accent rounded-pill px-4 py-2 ms-3 shadow">
+            <i class="fas fa-plus me-2"></i>Nova Peça
+        </a>
+    </div>
+
+    <div class="pecas-grid">
+       @foreach (var peca in Model)
+        {
+            <div class="peca-panel position-relative d-flex flex-column justify-content-between">
+                <div class="peca-content">
+                    <h5 class="fw-bold">@peca.NomePeca</h5>
+
+                    <span class="badge mb-2 px-3 py-2 rounded-pill 
+                        @(peca.Status == 0 ? "bg-warning text-dark" :
+                        peca.Status == 1 ? "bg-success text-white" :
+                        "bg-secondary")">
+                        @(peca.Status == 0 ? "PENDENTE" :
+                        peca.Status == 1 ? "COMPRADO" :
+                        "DESCONHECIDO")
+                    </span>
+
+                    <p class="descricao">@peca.Descricao</p>
+                    <div class="preco">R$ @peca.Preco.ToString("F2")</div>
+                </div>
+
+                <div class="peca-actions mt-2">
+                    <button class="btn btn-outline-light btn-sm" onclick="openModal('edit', @peca.IdPeca); event.stopPropagation();"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-outline-light btn-sm" onclick="openModal('details', @peca.IdPeca); event.stopPropagation();"><i class="fas fa-eye"></i></button>
+                    <form method="post" action="/Pecas/Deletar" onsubmit="return confirm('Tem certeza que deseja excluir esta peça?');" class="d-inline">
+                        <input type="hidden" name="id" value="@peca.IdPeca" />
+                        <button type="submit" onclick="event.stopPropagation();" title="Excluir"><i class="fas fa-trash-alt text-danger"></i></button>
+                    </form>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<div id="pecaModal" class="modal-container d-none">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h5 id="modalTitle" class="text-accent text-center w-100">Peça</h5>
+            <button class="btn-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalContent"></div>
+    </div>
+</div>
+
+<nav class="mt-4 d-flex justify-content-center">
+    <ul class="pagination" id="pagination"></ul>
+</nav>
+
+
+@section Scripts {
+<script>
+    const pecas = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+    const searchInput = document.getElementById('searchInput');
+    const suggestions = document.getElementById('suggestions');
+    const pecasGrid = document.querySelector('.pecas-grid');
+
+    const itensPorPagina = 6;
+    let paginaAtual = 1;
+    let pecasFiltradas = [...pecas];
+
+    function renderizarPecas(lista, pagina = 1) {
+        pecasGrid.innerHTML = '';
+        const inicio = (pagina - 1) * itensPorPagina;
+        const fim = inicio + itensPorPagina;
+        const paginaPecas = lista.slice(inicio, fim);
+
+        paginaPecas.forEach(peca => {
+            pecasGrid.innerHTML += `
+                <div class="peca-panel" data-id="${peca.IdPeca}" data-nome="${peca.NomePeca}">
+                    <div class="peca-content">
+                        <h5>${peca.NomePeca}</h5>
+                         <span class="badge mb-2 px-3 py-2 rounded-pill 
+                            ${peca.Status === 0 ? 'bg-warning text-dark' :
+                            peca.Status === 1 ? 'bg-success text-white' :
+                            'bg-secondary'}">
+                            ${peca.Status === 0 ? 'PENDENTE' :
+                            peca.Status === 1 ? 'COMPRADO' :
+                            'DESCONHECIDO'}
+                        </span>
+                        <p class="descricao">${peca.Descricao || ''}</p>
+                        <div class="preco">R$ ${peca.Preco.toFixed(2)}</div>
+                    </div>
+                    <div class="peca-actions">
+                        <button class="btn btn-outline-light btn-sm edit-btn"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-outline-light btn-sm details-btn"><i class="fas fa-eye"></i></button>
+                        <form method="post" action="/Pecas/Deletar" onsubmit="return confirm('Tem certeza que deseja excluir esta peça?');">
+                            <input type="hidden" name="id" value="${peca.IdPeca}" />
+                            <button type="submit" class="delete-btn" title="Excluir"><i class="fas fa-trash-alt text-danger"></i></button>
+                        </form>
+                    </div>
+                    
+                </div>`;
+        });
+
+        renderizarPaginacao(lista.length, pagina);
+        ativarCliqueExpansao();
+    }
+
+    function renderizarPaginacao(totalItens, paginaAtual) {
+        const totalPaginas = Math.ceil(totalItens / itensPorPagina);
+        let paginacaoHtml = '';
+
+        if (paginaAtual > 1) {
+            paginacaoHtml += `<li class="page-item">
+                <button class="page-link bg-warning border-dark" onclick="mudarPagina(${paginaAtual - 1})">&laquo</button>
+            </li>`;
+        }
+
+        for (let i = 1; i <= totalPaginas; i++) {
+            paginacaoHtml += `<li class="page-item ${i === paginaAtual ? 'active' : ''}">
+                <button class="page-link bg-warning border-dark" onclick="mudarPagina(${i})">${i}</button>
+            </li>`;
+        }
+
+        if (paginaAtual < totalPaginas) {
+            paginacaoHtml += `<li class="page-item">
+                <button class="page-link bg-warning border-dark" onclick="mudarPagina(${paginaAtual + 1})">&raquo</button>
+            </li>`;
+        }
+
+        document.getElementById('pagination').innerHTML = paginacaoHtml;
+    }
+
+    function mudarPagina(novaPagina) {
+        paginaAtual = novaPagina;
+        renderizarPecas(pecasFiltradas, paginaAtual);
+    }
+
+    searchInput.addEventListener('input', function () {
+        const query = this.value.toLowerCase().trim();
+        suggestions.innerHTML = '';
+
+        if (query === '') {
+            pecasFiltradas = [...pecas];
+            renderizarPecas(pecasFiltradas, 1);
+            return;
+        }
+
+        const resultados = pecas.filter(p => p.NomePeca.toLowerCase().includes(query));
+        pecasFiltradas = resultados;
+        renderizarPecas(pecasFiltradas, 1);
+
+        resultados.slice(0, 6).forEach(peca => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item list-group-item-action bg-dark text-light';
+            li.textContent = peca.NomePeca;
+            li.onclick = () => {
+                searchInput.value = peca.NomePeca;
+                suggestions.innerHTML = '';
+                pecasFiltradas = pecas.filter(p => p.NomePeca.toLowerCase().includes(peca.NomePeca.toLowerCase()));
+                renderizarPecas(pecasFiltradas, 1);
+            };
+            suggestions.appendChild(li);
+        });
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.innerHTML = '';
+        }
+    });
+
+    function openModal(type, id) {
+        const peca = pecas.find(p => p.IdPeca === id);
+        if (!peca) return alert("Peça não encontrada.");
+
+        const modal = document.getElementById('pecaModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+
+        if (type === 'edit') {
+            modalTitle.innerText = 'Editar Peça';
+            modalContent.innerHTML = 
+            modalContent.innerHTML = `
+            <form method="post" action="/Pecas/Editar">
+                <input type="hidden" name="IdPeca" value="${peca.IdPeca}" />
+                <div class="mb-3">
+                    <label class="form-label text-light">Nome da Peça:</label>
+                    <input name="NomePeca" class="form-control bg-dark text-light border-light" value="${peca.NomePeca}" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Descrição:</label>
+                    <textarea name="Descricao" class="form-control bg-dark text-light border-light">${peca.Descricao || ''}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Preço:</label>
+                    <input type="number" name="Preco" class="form-control bg-dark text-light border-light" value="${peca.Preco}" step="0.01" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Status:</label>
+                    <select name="Status" class="form-select bg-dark text-light border-light">
+                        <option value="0" ${peca.Status === 0 ? 'selected' : ''}>Pendente</option>
+                        <option value="1" ${peca.Status === 1 ? 'selected' : ''}>Comprado</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-accent">Salvar</button>
+            </form>`;
+        } else if (type === 'details') {
+            modalTitle.innerText = 'Detalhes da Peça';
+            modalContent.innerHTML = `
+                <p><strong class="text-accent">Nome:</strong> ${peca.NomePeca}</p>
+                <p><strong class="text-accent">Descrição:</strong> ${peca.Descricao || 'N/A'}</p>
+                <p><strong class="text-accent">Preço:</strong> R$ ${peca.Preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>`;
+                
+        }
+
+        modal.classList.remove('d-none');
+    }
+
+    function closeModal() {
+        document.getElementById('pecaModal').classList.add('d-none');
+    }
+
+    function ativarCliqueExpansao() {
+        document.querySelectorAll('.peca-panel').forEach(panel => {
+            panel.onclick = () => panel.classList.toggle('expanded');
+
+            const id = parseInt(panel.dataset.id);
+
+            panel.querySelector('.edit-btn')?.addEventListener('click', e => {
+                e.stopPropagation();
+                openModal('edit', id);
+            });
+
+            panel.querySelector('.details-btn')?.addEventListener('click', e => {
+                e.stopPropagation();
+                openModal('details', id);
+            });
+
+            panel.querySelector('.delete-btn')?.addEventListener('click', e => {
+                e.stopPropagation();
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        ativarCliqueExpansao();
+        renderizarPecas(pecasFiltradas, paginaAtual);
+    });
+</script>
+}

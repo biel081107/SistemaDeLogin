@@ -1,0 +1,103 @@
+﻿@{
+    Layout = null;
+    var authenticado = User.Identity == null ? false : User.Identity.IsAuthenticated;
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema de Controle de Peças e Serviços</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/headerFooterStyle.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- HEADER / NAVBAR -->
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark border-bottom box-shadow mb-3" style="background: linear-gradient(90deg, #26168C 0%, #110E59 100%);">
+            <div class="container-fluid">
+                <!-- Ícone ou nome da empresa à esquerda -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/homeIcon.ico" alt="Home"/>
+                </a>
+
+                <!-- Botão Hamburguer para mobile -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Links alinhados à direita -->
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <div class="navbar-nav">
+                        <a class="nav-link text-light" href="/">Início</a>
+                        <a class="nav-link text-light" href="/Home/Contato">Contato</a>
+
+                        @if(authenticado)
+                        {
+                            <!-- Ícone de usuário logado -->
+                            <!-- Dropdown com ícone de usuário (visível apenas se logado) -->
+                            <div class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle fa-lg text-light"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="/Conta/Index">
+                                            <i class="fas fa-user me-2"></i>Minha Conta
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="post" action="/Conta/Logout" class="d-inline">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="nav-link text-light" href="/Conta/Login">Entrar</a>
+                        }
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main role="main" class="container py-4">
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                &copy; @DateTime.Now.Year - Gabriel Cassio Alexandre Olímpio - Prodigy Tech
+            </div>
+            <div class="footer-links">
+                <a href="/Home/Contato">Contato</a>
+                <a href="mailto:contatoolimpiodev@gmail.com">E-mail</a>
+                <a href="https://github.com/seu-usuario" target="_blank">GitHub</a>
+                <a href="https://linkedin.com/in/seu-usuario" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
