@@ -324,3 +324,11 @@ C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\SistemaDeLogin.pdb
 C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\SistemaDeLogin.genruntimeconfig.cache
 C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\ref\SistemaDeLogin.dll
 C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\obj\Debug\net9.0\SistemaDeLogin.sourcelink.json
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\Microsoft.AspNetCore.DataProtection.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\Microsoft.AspNetCore.DataProtection.Abstractions.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\System.Security.Cryptography.Xml.dll
+C:\Users\gabri\ASP_PROJECTS\SistemaDeLogin\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Security.Cryptography.Pkcs.dll

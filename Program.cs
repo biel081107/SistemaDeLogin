@@ -1,9 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
-using Microsoft.AspNetCore.Builder;
 using SistemaDeLogin.Data;
-using Microsoft.AspNetCore.Identity;
 using SistemaDeLogin.Repositories.Cliente;
 using SistemaDeLogin.Repositories.Servicos;
 using SistemaDeLogin.Repositories.Pecas;
@@ -13,76 +11,84 @@ using SistemaDeLogin.Services.Servico;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 🔥 Configurar a porta que o Render libera
+var port = Environment.GetEnvironmentVariable("PORT");
 
-// Add services to the container.
+if (port != null)
+{
+    var url = $"http://0.0.0.0:{port}";
+    builder.WebHost.UseUrls(url);
+}
+
+// 🔥 Serviços MVC
 builder.Services.AddControllersWithViews();
 
-//Add Context
+// 🔥 Configurar banco SQLite
 builder.Services.AddDbContext<SistemaContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-//Add Injeções Clientes
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<IClienteService, ClienteService>();
-
-//Add Injeções Servicos
-builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
-builder.Services.AddScoped<IServicoService, ServicoService>();
-
-//Add Injeções Peças
-builder.Services.AddScoped<IPecasRepository, PecasRepository>();
-builder.Services.AddScoped<IPecasService, PecasService>();
-
-//Add Identity
+// 🔥 Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<SistemaContext>()
     .AddDefaultTokenProviders();
 
+// 🔥 Injeção de dependência - Clientes
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
+
+// 🔥 Injeção de dependência - Serviços
+builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
+builder.Services.AddScoped<IServicoService, ServicoService>();
+
+// 🔥 Injeção de dependência - Peças
+builder.Services.AddScoped<IPecasRepository, PecasRepository>();
+builder.Services.AddScoped<IPecasService, PecasService>();
 
 var app = builder.Build();
 
-//Add Roles (Admin, User)
-
+// 🔥 Migração automática + Roles + Usuário Admin
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<SistemaContext>();
+    db.Database.Migrate();
+
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
     string[] roles = { "Admin", "User" };
 
     foreach (var role in roles)
     {
-        var roleExits = await roleManager.RoleExistsAsync(role);
-
-        if (!roleExits)
+        var roleExists = await roleManager.RoleExistsAsync(role);
+        if (!roleExists)
         {
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
 
-    //Criar um Admin Incial
-    var email = "admin@gmail.com";
-    var password = "Admin@7221";
+    // 🔥 Criar um usuário Admin inicial
+    var adminEmail = "admin@gmail.com";
+    var adminPassword = "Admin@7221";
 
-    var adminUser = await userManager.FindByEmailAsync(email);
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
     {
         var newAdmin = new IdentityUser
         {
-            Email = email,
-            UserName = email,
-            EmailConfirmed = true,
+            Email = adminEmail,
+            UserName = adminEmail,
+            EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(newAdmin, password);
-
+        var result = await userManager.CreateAsync(newAdmin, adminPassword);
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(newAdmin, "Admin");
         }
     }
 
+    // 🔥 Resetar senha de um usuário específico (opcional)
     var user = await userManager.FindByEmailAsync("abcd@gmail.com");
     if (user != null)
     {
@@ -91,27 +97,24 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
-    // Configure the HTTP request pipeline.
-    if (!app.Environment.IsDevelopment())
-    {
-        app.UseExceptionHandler("/Home/Error");
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        app.UseHsts();
-    }
+// 🔥 Middlewares
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
+// 🔥 Roteamento
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
