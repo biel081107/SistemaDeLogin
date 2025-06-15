@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Acesso Negado";
+    var authenticado = User.Identity?.IsAuthenticated == null ? false : true;
+}
+
+<div style="text-align: center; margin-top: 100px;">
+    <h1 style="color: red; font-size: 48px;">🚫 Acesso Negado</h1>
+    <p style="font-size: 20px; color: #555;">
+        Você não tem permissão para acessar essa página.
+    </p>
+
+    @if (authenticado)
+    {
+        <p style="font-size: 18px;">
+            Parece que você não está <strong>logado</strong>. <br />
+            <a href="/Identity/Account/Login" style="color: dodgerblue; text-decoration: none;">
+                🔑 Fazer Login
+            </a>
+        </p>
+    }
+    else
+    {
+        <p style="font-size: 18px;">
+            Se você acha que isso é um erro, entre em contato com o <strong>administrador</strong>.
+        </p>
+    }
+
+    <a href="/" style="display: inline-block; margin-top: 20px; background-color: dodgerblue; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        ⬅️ Voltar para a Home
+    </a>
+</div>

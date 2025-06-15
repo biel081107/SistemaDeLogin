@@ -44,6 +44,13 @@ builder.Services.AddScoped<IServicoService, ServicoService>();
 builder.Services.AddScoped<IPecasRepository, PecasRepository>();
 builder.Services.AddScoped<IPecasService, PecasService>();
 
+//Configurar o IdentityOptions
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Conta/AcessoNegado";
+    options.LoginPath = "/Conta/Login";
+});
+
 var app = builder.Build();
 
 // 🔥 Migração automática + Roles + Usuário Admin

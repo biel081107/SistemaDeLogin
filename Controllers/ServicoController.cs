@@ -114,7 +114,7 @@ public class ServicoController : Controller
             
         return RedirectToAction("Index");
     }
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteServicoById(int id)
     {
         if (id <= 0)

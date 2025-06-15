@@ -65,7 +65,7 @@
                     </div>
                     <div class="col-md-4">
                         <label asp-for="DataDeEntrada" class="form-label"></label>
-                        <input asp-for="DataDeEntrada" type="date" class="form-control" required min="@($"{DateTime.Now.Year}-01-01")" />
+                        <input asp-for="DataDeEntrada" type="date" class="form-control" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="DataDeEntrada" class="text-danger"></span>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label asp-for="PrevisaoDeEntrega" class="form-label"></label>
-                        <input asp-for="PrevisaoDeEntrega" type="date" class="form-control" required min="@($"{DateTime.Now.Year}-01-01")" />
+                        <input asp-for="PrevisaoDeEntrega" type="date" class="form-control" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="PrevisaoDeEntrega" class="text-danger"></span>
                     </div>
                 </div>

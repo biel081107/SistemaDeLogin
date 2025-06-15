@@ -214,9 +214,11 @@
                         </button>
                         <form method="post" action="/Cliente/Deletar" onsubmit="return confirm('Deseja realmente excluir este cliente?');" class="d-inline">
                             <input type="hidden" name="idCliente" value="${cliente.IdCliente}" />
-                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
+                            ${isAdmin ? `
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            ` : ''}
                         </form>
                     </div>
                 </div>`;
@@ -313,7 +315,8 @@
                         <div class="mb-3">
                             <label class="form-label">CPF:</label>
                             <input name="Cpf" class="form-control" value="${cliente.Cpf || ''}" required />
-                        </div>` : ''
+                        </div>` 
+                        : `<input type="hidden" name="Cpf" value="${cliente.Cpf}" />`
                     }
                     <div class="mb-3">
                         <label class="form-label">Telefone:</label>

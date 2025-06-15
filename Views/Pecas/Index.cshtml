@@ -258,6 +258,7 @@
     const searchInput = document.getElementById('searchInput');
     const suggestions = document.getElementById('suggestions');
     const pecasGrid = document.querySelector('.pecas-grid');
+    const isAdmin = @User.IsInRole("Admin").ToString().ToLower();
 
     const itensPorPagina = 6;
     let paginaAtual = 1;
@@ -288,10 +289,12 @@
                     <div class="peca-actions">
                         <button class="btn btn-outline-light btn-sm edit-btn"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-outline-light btn-sm details-btn"><i class="fas fa-eye"></i></button>
+                        ${isAdmin ? `
                         <form method="post" action="/Pecas/Deletar" onsubmit="return confirm('Tem certeza que deseja excluir esta peça?');">
                             <input type="hidden" name="id" value="${peca.IdPeca}" />
                             <button type="submit" class="delete-btn" title="Excluir"><i class="fas fa-trash-alt text-danger"></i></button>
                         </form>
+                        ` : ''}
                     </div>
                     
                 </div>`;

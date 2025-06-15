@@ -82,9 +82,6 @@ public class ClienteController : Controller
     //[Authorize(Roles = "Admin")]
     public async Task<IActionResult> Editar(Clientes cliente)
     {
-        Console.WriteLine(cliente.IdCliente);
-        Console.WriteLine(cliente.Cpf ?? "Cpf é Null");
-        Console.WriteLine(cliente.Nome);
         if (!ModelState.IsValid)
         {
             TempData["Erro"] = "Dados inválidos. Por favor, verifique os campos.";
@@ -97,7 +94,7 @@ public class ClienteController : Controller
 
     // ✅ Post para deletar cliente
     [HttpPost]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int IdCliente)
     {
         Console.WriteLine(IdCliente);

@@ -89,7 +89,7 @@ public class PecasController : Controller
 
     // ✅ Post para deletar peça
     [HttpPost]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int id)
     {
         await _pecasService.DeletePecasByIdAsync(id);
