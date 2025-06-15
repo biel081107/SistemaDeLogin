@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Sobre o Projeto";
+}
+
+<style>
+    .sobre-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: var(--dark);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+        color: var(--text-light);
+        line-height: 1.8;
+    }
+
+    .sobre-container h1, .sobre-container h2 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .sobre-container p, .sobre-container li {
+        font-size: 1rem;
+    }
+
+    .sobre-container ul {
+        list-style: none;
+        padding-left: 1.2rem;
+    }
+
+    .sobre-container ul li::before {
+        content: "•";
+        color: var(--accent);
+        display: inline-block;
+        width: 1em;
+        margin-left: -1em;
+    }
+
+    .code-block {
+        background-color: #1c1c1c;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        font-family: monospace;
+        color: #ffcc00;
+        margin-bottom: 1rem;
+        word-break: break-all;
+    }
+
+    @@media (max-width: 768px) {
+        .sobre-container {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="sobre-container">
+    <h1>🛒 Sobre o Projeto</h1>
+    <p>
+        Este sistema web foi desenvolvido com o objetivo de praticar e aplicar os conhecimentos em <strong>ASP.NET Core com Identity</strong>,
+        focando no controle de autenticação, autorização e gerenciamento de usuários dentro de um ambiente realista de uma loja fictícia de eletrônicos.
+    </p>
+    <p>
+        O sistema simula o dia a dia de uma assistência técnica, oferecendo funcionalidades completas para o controle de clientes, serviços realizados e peças utilizadas ou a serem compradas.
+    </p>
+
+    <h2>🔐 Autenticação e Permissões</h2>
+    <p>
+        A aplicação utiliza o <strong>ASP.NET Core Identity</strong> para gerenciar login, logout, registro de novos usuários e controle de permissões com base no tipo de conta.
+    </p>
+    <ul>
+        <li><strong>👤 Funcionários comuns:</strong> podem visualizar e cadastrar serviços e clientes.</li>
+        <li><strong>👑 Administradores:</strong> têm acesso completo, podendo  até excluir dados.</li>
+    </ul>
+
+    <p class="mt-3">
+        ⚠️ Para fins de teste, já existe uma conta de administrador criada automaticamente com os seguintes dados:
+    </p>
+    <div class="code-block">
+        Email: admin@gmail.com<br />
+        Senha: Admin@7221
+    </div>
+
+    <h2>📋 Funcionalidades da Aplicação</h2>
+    <ul>
+        <li><strong>👥 Gerenciamento de Clientes:</strong> cadastro, edição e visualização de dados de clientes atendidos.</li>
+        <li><strong>🛠️ Serviços Prestados:</strong> cada cliente pode ter um ou mais serviços associados (ex: manutenção, troca de peça, orçamento etc).</li>
+        <li><strong>🧩 Controle de Peças:</strong> mantenha o controle de peças já adquiridas ou que ainda serão compradas, com campos como nome, modelo, quantidade e status de compra.</li>
+        <li><strong>🔐 Acesso restrito por nível de permissão:</strong> exclusões e ações sensíveis só podem ser feitas por usuários com perfil de admin.</li>
+    </ul>
+
+    <h2>🎯 Objetivo do Projeto</h2>
+    <p>
+        Este projeto foi construído com o foco em <strong>praticar na prática</strong> a configuração e uso do <strong>ASP.NET Identity</strong>, integrando autenticação com uma aplicação funcional de gerenciamento, em um cenário parecido com o de uso real.
+    </p>
+    <p>
+        Ele também reforça boas práticas de estruturação de código, uso do <strong>Entity Framework Core</strong> para acesso ao banco de dados, e <strong>Razor Views com Tag Helpers</strong> para exibição dos dados de forma organizada e responsiva.
+    </p>
+</div>

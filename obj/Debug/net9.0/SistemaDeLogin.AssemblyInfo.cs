@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SistemaDeLogin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c795fb0e07ac5d91a1d28a9d03f90f59765429d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26fcaf0d73c1138db08c5c2a172088201e299b28")]
 [assembly: System.Reflection.AssemblyProductAttribute("SistemaDeLogin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SistemaDeLogin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
